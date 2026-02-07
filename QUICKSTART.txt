@@ -1,0 +1,40 @@
+OpenClaw Chrome Extension v2.0.0 - Quick Start
+===============================================
+
+INSTALLATION:
+
+1. Extract this archive to a folder on your computer
+   Example: C:\openclaw-extension\
+
+2. Open Chrome and go to: chrome://extensions/
+
+3. Enable "Developer mode" (toggle in top-right corner)
+
+4. Click "Load unpacked"
+
+5. Select the extracted folder (the one containing manifest.json)
+
+6. Done! You should see the 🔱 icon in your toolbar
+
+USAGE:
+
+1. Click the extension icon to check connection status
+   - Should connect to: ws://127.0.0.1:18792
+   - Click "Test Connection" to verify
+
+2. Open any website (e.g., calendar.google.com)
+
+3. Click the extension icon on that tab
+
+4. Badge changes to "ON" = tab is now controlled by OpenClaw
+
+TROUBLESHOOTING:
+
+- Make sure OpenClaw gateway is running: openclaw gateway status
+- Check port 18792 is accessible
+- Refresh tabs after installing extension
+- See INSTALL.md for detailed help
+
+---
+
+Full docs: https://github.com/nocodebrain/openclaw-chrome-extension
