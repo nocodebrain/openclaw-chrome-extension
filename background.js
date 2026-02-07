@@ -20,14 +20,14 @@ function connect() {
     ws.onopen = () => {
       console.log('[OpenClaw] Connected to gateway');
       isConnected = true;
-      updateBadge('ON');
+      updateBadge('·'); // Show dot to indicate connection ready
       clearTimeout(reconnectTimer);
       
       // Send handshake
       send({
         type: 'relay.handshake',
         source: 'chrome-extension',
-        version: '2.0.0'
+        version: '2.0.1'
       });
     };
     
@@ -73,11 +73,19 @@ function send(data) {
 }
 
 // Update extension badge
-function updateBadge(text) {
-  chrome.action.setBadgeText({ text });
-  chrome.action.setBadgeBackgroundColor({ 
-    color: text === 'ON' ? '#00FF00' : text === 'ERR' ? '#FF0000' : '#808080'
-  });
+function updateBadge(text, tabId = null) {
+  const params = tabId ? { text, tabId } : { text };
+  chrome.action.setBadgeText(params);
+  
+  let color = '#808080'; // Default grey
+  if (text === 'ON') color = '#00FF00';  // Green for attached
+  else if (text === '·') color = '#0066ff';  // Blue for connected
+  else if (text === 'ERR') color = '#FF0000';  // Red for error
+  
+  const colorParams = { color };
+  if (tabId) colorParams.tabId = tabId;
+  
+  chrome.action.setBadgeBackgroundColor(colorParams);
 }
 
 // Handle messages from gateway
@@ -209,10 +217,19 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 chrome.action.onClicked.addListener((tab) => {
   if (connectedTabs.has(tab.id)) {
     connectedTabs.delete(tab.id);
-    chrome.action.setBadgeText({ text: 'OFF', tabId: tab.id });
+    updateBadge('', tab.id); // Clear badge for this tab
+    
+    if (isConnected) {
+      send({
+        type: 'tab.detached',
+        tabId: tab.id,
+        url: tab.url,
+        title: tab.title
+      });
+    }
   } else {
     connectedTabs.add(tab.id);
-    chrome.action.setBadgeText({ text: 'ON', tabId: tab.id });
+    updateBadge('ON', tab.id); // Show ON for this tab
     
     if (isConnected) {
       send({
@@ -223,6 +240,34 @@ chrome.action.onClicked.addListener((tab) => {
       });
     }
   }
+});
+
+// Handle messages from popup
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log('[OpenClaw] Popup message:', message);
+  
+  switch (message.action) {
+    case 'getStatus':
+      sendResponse({ 
+        connected: isConnected,
+        gatewayUrl: gatewayUrl,
+        connectedTabs: Array.from(connectedTabs)
+      });
+      break;
+      
+    case 'reconnect':
+      if (ws) {
+        ws.close();
+      }
+      setTimeout(connect, 100);
+      sendResponse({ ok: true });
+      break;
+      
+    default:
+      sendResponse({ error: 'Unknown action' });
+  }
+  
+  return true; // Keep channel open for async response
 });
 
 // Load settings and connect
