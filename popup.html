@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>OpenClaw Browser Relay</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #1a1a1a;
+      color: #ffffff;
+      margin: 0;
+    }
+    h1 {
+      font-size: 18px;
+      margin: 0 0 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .icon {
+      font-size: 24px;
+    }
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      background: #2a2a2a;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #808080;
+    }
+    .status-dot.connected {
+      background: #00ff00;
+      box-shadow: 0 0 8px #00ff00;
+    }
+    .status-dot.error {
+      background: #ff0000;
+      box-shadow: 0 0 8px #ff0000;
+    }
+    .info {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .settings {
+      background: #2a2a2a;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .settings label {
+      display: block;
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 6px;
+    }
+    .settings input {
+      width: 100%;
+      padding: 8px;
+      background: #1a1a1a;
+      border: 1px solid #404040;
+      border-radius: 4px;
+      color: #fff;
+      font-family: monospace;
+      font-size: 12px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #0066ff;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    button:hover {
+      background: #0052cc;
+    }
+    button.secondary {
+      background: #404040;
+    }
+    button.secondary:hover {
+      background: #505050;
+    }
+    .version {
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>
+    <span class="icon">🔱</span>
+    OpenClaw Relay
+  </h1>
+  
+  <div class="status">
+    <div class="status-dot" id="statusDot"></div>
+    <div id="statusText">Connecting...</div>
+  </div>
+  
+  <div class="info">
+    Click the extension icon on any tab to attach it to OpenClaw. The badge will show <strong>ON</strong> when attached.
+  </div>
+  
+  <div class="settings">
+    <label>Gateway URL</label>
+    <input type="text" id="gatewayUrl" value="ws://127.0.0.1:18792">
+  </div>
+  
+  <button id="reconnect">Reconnect Now</button>
+  <button class="secondary" id="testConnection">Test Connection</button>
+  
+  <div class="version">v2.0.0</div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
